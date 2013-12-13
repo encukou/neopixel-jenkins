@@ -1,1 +1,29 @@
-Jenkins status display
+Jenkins build status display on a LED strip, powered by an Arduino!
+
+Needs Adafruit NeoPixel library:
+    https://github.com/adafruit/Adafruit_NeoPixel
+I recommend Ino for compiling/running Arduino sketches from the command line:
+    http://inotool.org/
+
+Unfortunately this is not yet autonomous -- I don't have an Ethernet shield.
+To feed the data to the Arduino, you'll need a computer with Python and some
+Python libraries (see requirements.txt).
+
+
+Wire a WS2812 (NeoPixel) strip's data wire to pin 7, connect power and ground.
+Change the NUM_LEDS #define to the number of LEDs in your strip.
+
+
+Compile & upload to an Arduino.
+I use the `ino` wrapper, so this means:
+    ino build && ino upload
+
+Make note of the serial console Arduino is connected to.
+
+Then run the data feeder script:
+If Arduino is connected to /dev/ttyACM0, that would be something like:
+    python feed-data.py http://jenkins.yourdomain.example/ /dev/ttyACM0
+
+Enjoy the show!
+
+Pull requests welcome!
