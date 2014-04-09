@@ -16,7 +16,10 @@ byte current_color;
 void setup() {
     Serial.begin(9600);
     strip.begin();
-    //strip.setBrightness(10);
+
+    // Show a placeholder before any data is received
+    led_info[0][0] = 'X';
+    led_info[0][1] = 0;
 }
 
 void loop() {
