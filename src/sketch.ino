@@ -58,23 +58,21 @@ void loop() {
             strip.setPixelColor(led, 0);
             continue;
         }
+        unsigned long value = 120;
         if (!(led_info[led][0] & 0x20)) {
-            unsigned value;
             unsigned ms = millis() / 2;
             if (ms % 512 < 256) {
-                value = ms % 256;
+                value = (ms % 256) * 2;
             } else {
-                value = 255 - ms % 256;
-            }
-            for(int i=0; i <3; i++) {
-                rgb[i] = (rgb[i] * value) / 256;
+                value = (255 - ms % 256) * 2;
             }
         }
         for(int i=0; i <3; i++) {
-            rgb[i] = rgb[i] / 10;
+            rgb[i] = (rgb[i] * value) / 1024;
         }
         uint32_t color = strip.Color(rgb[0], rgb[1], rgb[2]);
         strip.setPixelColor(led, color);
     }
     strip.show();
+    delay(10);
 }
