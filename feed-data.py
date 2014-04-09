@@ -31,7 +31,10 @@ def main(jenkins, out_file, prefix, interval):
                 info = jenkins.get_job_info(job['name'])
                 health = None
                 healths = [h['score'] for h in info['healthReport']]
-                health = sum(healths) / len(healths)
+                if healths:
+                    health = sum(healths) / len(healths)
+                else:
+                    health = 1
                 color, sep, ani = info['color'].lower().partition('_')
                 if color in ('red', 'green', 'yellow'):
                     letter = color[0]
