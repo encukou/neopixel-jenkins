@@ -22,34 +22,40 @@ def clamp(mini, val, maxi):
         return maxi
     return val
 
+
+def feed(jenkins, out_file, prefix):
+    jobs = jenkins.get_jobs()
+    last_letter = None
+    for job in jobs:
+        if job['name'].startswith(prefix):
+            info = jenkins.get_job_info(job['name'])
+            health = None
+            healths = [h['score'] for h in info['healthReport']]
+            if healths:
+                health = sum(healths) / len(healths)
+            else:
+                health = 1
+            color, sep, ani = info['color'].lower().partition('_')
+            if color in ('red', 'green', 'yellow'):
+                letter = color[0]
+            elif color == 'blue':
+                letter = 'g'
+            else:
+                letter = 'x'
+            if ani:
+                letter = letter.upper()
+            number = '9876543210'[clamp(0, health // 10, 9)]
+            print letter, number, info['name'], info['color'], healths
+            out_file.write(letter)
+            out_file.write(number)
+    print
+    out_file.write('\n')
+
+
 def main(jenkins, out_file, prefix, interval):
+    feed(jenkins, out_file, prefix)
     while True:
-        jobs = jenkins.get_jobs()
-        last_letter = None
-        for job in jobs:
-            if job['name'].startswith(prefix):
-                info = jenkins.get_job_info(job['name'])
-                health = None
-                healths = [h['score'] for h in info['healthReport']]
-                if healths:
-                    health = sum(healths) / len(healths)
-                else:
-                    health = 1
-                color, sep, ani = info['color'].lower().partition('_')
-                if color in ('red', 'green', 'yellow'):
-                    letter = color[0]
-                elif color == 'blue':
-                    letter = 'g'
-                else:
-                    letter = 'x'
-                if ani:
-                    letter = letter.upper()
-                number = '9876543210'[clamp(0, health // 10, 9)]
-                print letter, number, info['name'], info['color'], healths
-                out_file.write(letter)
-                out_file.write(number)
-        print
-        out_file.write('\n')
+        feed(jenkins, out_file, prefix)
         if not interval:
             return
         else:
